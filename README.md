@@ -6,7 +6,7 @@ The default intervals and encryption key can be changed in `src/sensor.cpp`
 
 The default hardware configuration is:
 ```
-GND -- R0 [10k] -- GPIO A4 -- NTC [50k, B=3950] -- GPIO A12
+GPIO B15 -- R2 [10k] -- GPIO A9 -- NTC [50k, B=3950] -- VCC
 ```
 
 ## Building
