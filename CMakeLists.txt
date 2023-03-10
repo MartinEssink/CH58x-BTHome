@@ -1,0 +1,64 @@
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_VERSION 1)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
+cmake_minimum_required(VERSION 3.20)
+
+set(TOOLPATH  /home/martin/CH58X/MRS_Toolchain_Linux_x64_V1.60/RVEGCC/bin/riscv-none-embed-)
+project(ch582-bthome C CXX ASM)
+
+set(CMAKE_C_COMPILER ${TOOLPATH}gcc)
+set(CMAKE_CXX_COMPILER ${TOOLPATH}g++)
+set(CMAKE_ASM_COMPILER ${TOOLPATH}gcc)
+set(CMAKE_AR ${TOOLPATH}ar)
+set(CMAKE_OBJCOPY ${TOOLPATH}objcopy)
+set(CMAKE_OBJDUMP ${TOOLPATH}objdump)
+set(SIZE ${TOOLPATH}size)
+
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_STANDARD 99)
+
+
+add_compile_options(-march=rv32imac -mabi=ilp32 -mcmodel=medany -msmall-data-limit=8 -mno-save-restore)
+add_compile_options(-fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common)
+
+add_compile_options(-O3)
+add_compile_options(-Wall)
+
+include_directories(wch/BLE_LIB 
+                    wch/RVMSIS  
+                    wch/StdPeriphDriver/inc
+                    src/include
+                    wch/HAL/include)
+
+file(GLOB_RECURSE SOURCES 
+                "wch/Startup/*.S" 
+                "wch/USB_LIB/*.c"
+                "wch/RVMSIS/*.c"
+                "wch/StdPeriphDriver/*.c" 
+                "src/*.c"
+                "src/*.cpp"
+                "wch/HAL/*.c")
+
+set(LINKER_SCRIPT  ${CMAKE_SOURCE_DIR}/wch/Ld/Link.ld)
+add_link_options(-nostartfiles -lm
+                -Xlinker --gc-sections  
+                -Wl,--print-memory-usage
+                -Wl,-Map,${PROJECT_NAME}.map 
+                --specs=nano.specs 
+                --specs=nosys.specs)
+add_link_options(-T ${LINKER_SCRIPT})
+
+add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
+
+target_link_libraries(${PROJECT_NAME}.elf 
+        ${CMAKE_SOURCE_DIR}/wch/StdPeriphDriver/libISP583.a 
+        ${CMAKE_SOURCE_DIR}/wch/BLE_LIB/LIBCH58xBLE.a
+        m)
+
+set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)
+set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)
+add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
+        COMMAND ${CMAKE_OBJCOPY} -Oihex $<TARGET_FILE:${PROJECT_NAME}.elf> ${HEX_FILE}
+        COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE}
+)
