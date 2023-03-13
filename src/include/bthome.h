@@ -69,8 +69,18 @@
 #define BTHOME_OBJECTID_SPEED                 	0x44
 #define BTHOME_OBJECTID_TEMPERATURE_COARSE    	0x45
 #define BTHOME_OBJECTID_UV_INDEX              	0x46
+#define BTHOME_OBJECTID_VOLUME_LITERS_COURSE    0x47
+#define BTHOME_OBJECTID_VOLUME_MILLILITERS      0x48
+#define BTHOME_OBJECTID_VOLUME_FLOW_RATE        0x49
+#define BTHOME_OBJECTID_VOLTAGE_COURSE          0x4A
+#define BTHOME_OBJECTID_GAS_VOLUME              0x4B
+#define BTHOME_OBJECTID_GAS_VOLUME2             0x4C
+#define BTHOME_OBJECTID_ENERGY_KWH              0x4D
+#define BTHOME_OBJECTID_VOLUME_LITERS           0x4E
+#define BTHOME_OBJECTID_WATER_VOLUME_LITERS     0x4F
 
-#define BTHOME_MAX_OBJECTID		             	0x47
+
+#define BTHOME_MAX_OBJECTID		             	0x50
 
 typedef void (*bthome_meas_fn_ptr)(uint8_t*);
 
@@ -80,7 +90,8 @@ const uint8_t BTHomeDataLength[BTHOME_MAX_OBJECTID] = {
 	1,1,2,1,2,1,1,1,1,1,1,1,1,1,1,1,//1
 	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,//2
 	0,0,0,0,0,0,0,0,0,0,1,0,1,2,4,2,//3
-	2,2,3,2,2,2,1};//4
+	2,2,3,2,2,2,1,2,2,2,2,3,4,4,4,4,//4
+	};//5
 
 class BTHome{
 public:
